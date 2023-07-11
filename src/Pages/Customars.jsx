@@ -1,80 +1,50 @@
 import { Space, Table, Tag } from 'antd';
+import { useEffect } from 'react';
+import { getAllUsers } from '../features/customars/CustomarSlice';
+import {useDispatch, useSelector} from 'react-redux'
+
 const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
-        </Space>
-      ),
-    },
-  ];
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sydney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-  ];
+  {
+    title: "SNo",
+    dataIndex: "key",
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    sorter: (a, b) => a.name.length - b.name.length,
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+  },
+  {
+    title: "Mobile",
+    dataIndex: "mobile",
+  },
+];
 const Customers = () => {
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    dispatch(getAllUsers())
+  },[])
+  const customerState = useSelector((state) => state.customer.customers)
+ // console.log(customerState)
+ const data1 = [];
+  for(let i = 0; i < customerState.length; i++){
+    if(customerState[i].role !== "admin"){
+      data1.push({
+        key:i+1,
+        name: customerState[i].firstName + " " + customerState[i].lastName,
+        email:customerState[i].email,
+        mobile:customerState[i].mobile,
+      })
+    }
+  }
+
   return (
     <div>
         <h3>Customers list</h3>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={data1} />
     </div>
   )
 }

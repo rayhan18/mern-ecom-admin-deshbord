@@ -35,6 +35,7 @@ const Login = () => {
     navigate("admin")
   }else{
     alert("You are not logged in")
+    navigate("")
   }
   },[user,isLoding,isError,isSuccess,message])
   return (
@@ -43,6 +44,7 @@ const Login = () => {
        
        <h4 className="text-center">Login</h4>
        <h4 className="text-center">LOgin to your account to continue</h4>
+       {message.message == "Rejected" ? "You are not Admin " : ""}
         <Form action="" onSubmit={formik.handleSubmit}>
         <CoustomLayout 
         type="text"

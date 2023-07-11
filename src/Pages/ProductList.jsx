@@ -1,80 +1,88 @@
-import { Space, Table, Tag } from 'antd';
+import { Space, Table } from 'antd';
+import { getProducts } from '../features/product/ProductSlice';
+import { useEffect } from 'react';
+import {Link} from 'react-router-dom'
+import { BiSolidEdit,BiTrash } from "react-icons/bi";
+import {useDispatch ,useSelector} from 'react-redux';
 const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'SNO',
+      dataIndex: 'key',
+      key: 'key',
       render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      sorter:(a,b)=> a.title.length - b.title.length
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      sorter:(a,b)=> a.description.length - b.description.length
     },
     {
-      title: 'Tags',
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      sorter:(a,b)=> a.price.length - b.price.length
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      sorter:(a,b)=> a.quantity.length - b.quantity.length
+    },
+    {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
+      
+    },
+    {
+      title: 'Status',
       key: 'tags',
       dataIndex: 'tags',
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+     
     },
     {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
+          <Link to="/"><BiSolidEdit/> {record.name}</Link>
+          <Link to="#"><BiTrash className='text-danger'/></Link>
         </Space>
       ),
     },
   ];
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sydney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-  ];
+  
 const ProductList = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getProducts());
+  },[])
+  const productState = useSelector((state)=>state.product.products)
+   //console.log(productState)
+   const data1 =[]
+   for (let i = 0; i<productState.length; i++) {
+     data1.push({
+      key: i + 1 ,
+      title:productState[i].title,
+      description:productState[i].description,
+      price: `$ ${productState[i].price}`,
+      quantity: productState[i].quantity,
+      category:productState[i].category,
+      status:productState[i].status, 
+
+     })
+   }
   return (
     <div>
         <h3>ProductList</h3>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={data1} />
     </div>
   )
 }
